@@ -1,0 +1,32 @@
+/* 테이블 전체 스타일 */
+.board_table {
+  width: 100%;
+  border-collapse: collapse; /* 테이블 셀 간의 경계선 합치기 */
+  margin: 20px 0;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); 
+}
+
+/* 테이블 헤더 스타일 */
+.board_table thead {
+  background-color: #6d6d6d; 
+  color: white; 
+}
+/* 헤더 셀 스타일 */
+.board_table th {
+  padding: 12px 15px; 
+  text-align: left;
+  font-weight: bold; 
+  text-transform: uppercase;
+}
+
+/* 테이블 데이터 스타일 */
+.board_table td {
+  padding: 12px 15px; 
+  border: 1px solid #ddd; 
+  cursor: pointer;
+}
+/* 테이블의 첫 번째 열 스타일 (No 열) */
+.board_table td:first-child {
+  font-weight: bold; 
+  text-align: center; 
+}
