@@ -6,10 +6,10 @@ services:
     ports:
       - "3306:3306"  # MariaDB 기본 포트
     environment:
-      MYSQL_ROOT_PASSWORD: 1234         # MariaDB root 계정 비밀번호
+      MYSQL_ROOT_PASSWORD: 1234         # MariaDB root 계정 비밀번호(최고관리자, DB생성)
       MYSQL_DATABASE: mydatabase        # MariaDB 생성할 데이터베이스 이름
       MYSQL_USER: root                  # MariaDB 사용자 계정
-      MYSQL_PASSWORD: 1234              # 사용자 계정 비밀번호
+      MYSQL_PASSWORD: 1234              # 사용자 계정 비밀번호(사용시에 사용할 번호)
 
   node:
     build: .

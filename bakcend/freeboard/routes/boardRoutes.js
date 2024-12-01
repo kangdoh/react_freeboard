@@ -11,6 +11,7 @@ router.get('/', async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 });
+
 // 게시판 글 작성
 router.post('/', async (req, res) => {
   try {

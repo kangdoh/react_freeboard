@@ -8,7 +8,6 @@ const app = express();
 app.use(bodyParser.json());
 app.use('/boards', boardRoutes);
 
-
 sequelize.authenticate()
   .then(() => console.log('Database connected!'))
   .catch(err => console.error('Database connection error:', err));
