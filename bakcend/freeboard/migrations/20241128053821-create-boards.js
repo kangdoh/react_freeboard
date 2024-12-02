@@ -22,9 +22,15 @@ module.exports = {
       updatedAt: {
         allowNull: false,
         type: Sequelize.DATE
+      },
+      viewCount: {
+        allowNull: false,
+        type: Sequelize.INTEGER,
+        defaultValue: 0 
       }
     });
   },
+  
   async down(queryInterface, Sequelize) {
     await queryInterface.dropTable('Boards');
   }
