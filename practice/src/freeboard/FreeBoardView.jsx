@@ -1,45 +1,61 @@
-import { useNavigate, useParams } from 'react-router-dom';
-import BoardView from "css/FreeBoard/FreeBoardView.module.css"
+import { useNavigate, useParams } from "react-router-dom";
+import BoardView from "css/FreeBoard/FreeBoardView.module.css";
+import axios from "axios";
+import { useEffect, useState } from "react";
 
 function FreeBoardView() {
-    const { id } = useParams(); 
-    // 임시 데이터 (이 부분은 통신)
-    const postData = {
-        id: id,
-        title: "게시글 제목",
-        content: "게시글 내용이 여기에 들어갑니다.",
-        createDate: "2024-11-20",
-        viewCount: 100,
-    };
+  const { id } = useParams();
+  const [viewBoard, setViewBoard] = useState([]);
 
-    const navigate = useNavigate();
-    const boardUpdate = ()=>{
-      navigate(`/freeboard/freeboardupdate/${id}`)
+  // 게시판 불러오기
+  useEffect(() => {
+    const freeBoardView = async () => {
+      try {
+        const res = await axios.get(`http://localhost:5000/boards/${id}`);
+        setViewBoard(res.data);
+      } catch (error) {
+        console.error("boardView Error", error);
+      }
     };
-    const boardDelete = ()=>{
+    freeBoardView();
+  }, [id]);
 
+  const navigate = useNavigate();
+  // 게시판 수정으로 이동
+  const boardUpdate = () => {
+    navigate(`/freeboard/freeboardupdate/${id}`);
+  };
+
+  // 게시판 삭제
+  const boardDelete = async () => {
+    try {
+      await axios.delete(`http://localhost:5000/boards/${id}`);
+      navigate("/freeboard/freeboardlist");
+    } catch (error) {
+      console.log("삭제 실패", error);
     }
+  };
 
-    return (
-        <>
-          <div className={BoardView.post_container}>
-              <div className={BoardView.post_header}>
-                  <h1>{postData.title}</h1>
-                  <div className={BoardView.post_meta}>
-                      <span>{postData.createDate}</span>
-                      <span>조회수: {postData.viewCount}</span>
-                  </div>
-              </div>
-  
-              <div className={BoardView.post_content}>
-                  <p>{postData.content}</p>
-              </div>
+  return (
+    <>
+      <div className={BoardView.post_container}>
+        <div className={BoardView.post_header}>
+          <h1>{viewBoard.title}</h1>
+          <div className={BoardView.post_meta}>
+            <span>{viewBoard.createdAt}</span>
+            <span>조회수: {viewBoard.viewCount}</span>
           </div>
+        </div>
 
-          <button onClick={()=>boardUpdate(id)}>수정</button>
-          <button onClick={()=>boardDelete}>삭제</button>
-        </>
-    );
+        <div className={BoardView.post_content}>
+          <p>{viewBoard.content}</p>
+        </div>
+      </div>
+
+      <button type="button" onClick={() => boardUpdate()}>수정</button>
+      <button type="button" onClick={() => boardDelete()}>삭제</button>
+    </>
+  );
 }
 
 export default FreeBoardView;

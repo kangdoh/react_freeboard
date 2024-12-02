@@ -1,9 +1,18 @@
-import React from 'react'
+import React, { useState } from 'react'
 import BoardInput from "css/FreeBoard/FreeBoardInput.module.css"
 import { useParams } from 'react-router-dom'
+import axios from 'axios';
 
 function FreeBoardInput() {
   const {id} = useParams();
+
+  const [inputValue, setInputValue] = useState([]); 
+
+//   const createFreddBoard = () => {
+//     axios.post(`http://localhost:5000/boards/${setInputValue}`)
+//   }
+
+
 
   return (<>
         <div className={BoardInput.post_create_container}>
@@ -27,7 +36,9 @@ function FreeBoardInput() {
                         required
                     />
                 </div>
-                <button type="submit" className={BoardInput.submit_button}>작성 완료</button>
+                <button onSubmit="createFreddBoard" type="submit" className={BoardInput.submit_button}>
+                    작성 완료
+                </button>
             </form>
         </div>
 
