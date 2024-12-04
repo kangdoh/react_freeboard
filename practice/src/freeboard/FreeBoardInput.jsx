@@ -1,48 +1,117 @@
-import React, { useState } from 'react'
-import BoardInput from "css/FreeBoard/FreeBoardInput.module.css"
-import { useParams } from 'react-router-dom'
-import axios from 'axios';
+import React, { useEffect, useState } from "react";
+import BoardInput from "css/FreeBoard/FreeBoardInput.module.css";
+import { useNavigate, useParams } from "react-router-dom";
+import axios from "axios";
 
 function FreeBoardInput() {
-  const {id} = useParams();
-
-  const [inputValue, setInputValue] = useState([]); 
-
-//   const createFreddBoard = () => {
-//     axios.post(`http://localhost:5000/boards/${setInputValue}`)
-//   }
+  const navigate = useNavigate();
+  const { id } = useParams();
+  const [mode, setMode] = useState("");
 
 
+  // id의 여부로 생성,수정 구분
+  useEffect(() => {
+    if (id) {
+        setMode("update");
+        updateList()
+    } else {
+      setMode("create");
+    }
+  }, []);
 
-  return (<>
-        <div className={BoardInput.post_create_container}>
-            <h2>{ id ? '게시글 수정' : '게시글 작성' }</h2>
-            <form>
-                <div className={BoardInput.form_group}>
-                    <label htmlFor="title">제목</label>
-                    <input
-                        type="text"
-                        id="title"
-                        placeholder="게시글 제목을 입력하세요"
-                        required
-                    />
-                </div>
-                <div className={BoardInput.form_group}>
-                    <label htmlFor="content">내용</label>
-                    <textarea
-                        id="content"
-                        placeholder="게시글 내용을 입력하세요"
-                        rows="10"
-                        required
-                    />
-                </div>
-                <button onSubmit="createFreddBoard" type="submit" className={BoardInput.submit_button}>
-                    작성 완료
-                </button>
-            </form>
-        </div>
 
-</>)
+  // input 값 체크
+  const [inputValue, setInputValue] = useState({
+    title: "",
+    content: "",
+  });
+  const inputChange = (e) => {
+    const { name, value } = e.target; // name과 value 추출
+    setInputValue({
+      ...inputValue, // 기존 상태 유지
+      [name]: value, // name 속성을 키로 사용해 해당 값 업데이트
+    });
+  };
+  
+
+  // 수정시 게시글 가져오기
+  const updateList = async() => {
+    try{
+        const res = await axios.get(`http://localhost:5000/boards/${id}`);
+        setInputValue({
+          title: res.data.title,
+          content: res.data.content,
+        });
+    }
+    catch(error){
+        console.error('update list get error', error)
+    }
+  }
+
+  
+  // 작성완료 클릭 시(생성, 수정)
+  const createFreddBoard = async (e) => {
+    e.preventDefault();
+    if (mode === "create") {
+      try {
+        const res = await axios.post("http://localhost:5000/boards", inputValue);
+        if (res.status === 201) {
+          alert("작성완료");
+          navigate("/freeboard/freeboardlist");
+        }
+      } catch (error) {
+        console.error("글생성 에러", error);
+      }
+    }
+    else if (mode === "update") {
+      try {
+        const res = await axios.post(`http://localhost:5000/boards/update/${id}`, inputValue);
+        if(res.status === 201){
+            alert('수정완료')
+            navigate(`/freeboard/freeboardview/${id}`);
+        }
+      } catch (error) {
+        console.error("수정 에러", error);
+      }
+    }
+  };
+
+  return (
+    <>
+      <div className={BoardInput.post_create_container}>
+        <h2>{mode === "update" ? "게시글 수정" : "게시글 작성"}</h2>
+        <form onSubmit={createFreddBoard}>
+          <div className={BoardInput.form_group}>
+            <label htmlFor="title">제목</label>
+            <input
+              id="title"
+              type="text"
+              name="title"
+              value={inputValue.title}
+              placeholder="게시글 제목을 입력하세요"
+              required
+              onChange={inputChange}
+            />
+          </div>
+          <div className={BoardInput.form_group}>
+            <label htmlFor="content">내용</label>
+            <textarea
+              id="content"
+              name="content"
+              value={inputValue.content}
+              placeholder="게시글 내용을 입력하세요"
+              rows="10"
+              required
+              onChange={inputChange}
+            />
+          </div>
+          <button type="submit" className={BoardInput.submit_button}>
+            {mode === "update" ? "수정 완료" : "작성 완료"}
+          </button>
+        </form>
+      </div>
+    </>
+  );
 }
 
-export default FreeBoardInput
+export default FreeBoardInput;

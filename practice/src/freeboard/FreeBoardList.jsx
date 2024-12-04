@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
 function FreeBoardList() {
+
   const [freeboard, setFreeboard] = useState([]);
   
   // 게시판 리스트 가져오기
@@ -19,9 +20,15 @@ function FreeBoardList() {
     fetchFreeboard();
   }, []);
 
-  // 게시판 글 보기
+  // 게시판 글 보기 (카운트 증가)
   const navigate = useNavigate();
-  const viewPage = (id) => {
+  const viewPage = async(id) => {
+    try{
+      const res = await axios.post("http://localhost:5000/boards/upCount", { id })
+      console.log(res.data)
+    }catch(error){
+      console.error("error", error)
+    }
     navigate(`/freeboard/freeboardview/${id}`);
   };
 
@@ -44,10 +51,10 @@ function FreeBoardList() {
         </thead>
 
         <tbody>
-          {freeboard.map((item) => {
+          {freeboard.map((item, index) => {
             return (
               <tr key={item.id} onClick={() => viewPage(item.id)}>
-                <td>{item.id}</td>
+                <td>{index+1}</td>
                 <td>{item.title}</td>
                 <td>{item.content}</td>
                 <td>{item.createdAt}</td>

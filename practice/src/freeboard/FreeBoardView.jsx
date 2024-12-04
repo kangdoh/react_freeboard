@@ -4,6 +4,7 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 
 function FreeBoardView() {
+  const navigate = useNavigate();
   const { id } = useParams();
   const [viewBoard, setViewBoard] = useState([]);
 
@@ -18,21 +19,26 @@ function FreeBoardView() {
       }
     };
     freeBoardView();
-  }, [id]);
+  }, [id]);  
 
-  const navigate = useNavigate();
   // 게시판 수정으로 이동
-  const boardUpdate = () => {
+  const boardUpdate = async() => {
     navigate(`/freeboard/freeboardupdate/${id}`);
   };
 
   // 게시판 삭제
   const boardDelete = async () => {
-    try {
-      await axios.delete(`http://localhost:5000/boards/${id}`);
-      navigate("/freeboard/freeboardlist");
-    } catch (error) {
-      console.log("삭제 실패", error);
+    const inputDelete = prompt("삭제를 원하시면 '확인' 을 입력해주세요.")
+    if(inputDelete === "삭제"){
+      try {
+        await axios.delete(`http://localhost:5000/boards/${id}`);
+        navigate("/freeboard/freeboardlist");
+      } catch (error) {
+        console.log("삭제 실패", error);
+      }
+    }
+    else{
+      alert('잘못입력하셨습니다.')
     }
   };
 

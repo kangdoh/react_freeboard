@@ -8,9 +8,12 @@ router.get('/:id', freeboardController.viewList)
 
 // post
 router.post('/', freeboardController.postList)
+router.post('/upCount', freeboardController.upCount)
 
-// delete
+// deletecd 
 router.delete('/:id', freeboardController.deleteList)
 
+// update
+router.post('/update/:id', freeboardController.updateList)
 
 module.exports = router;

@@ -2,11 +2,12 @@ const express = require("express");
 const router = express.Router();
 const { Board } = require("../models"); // Sequelize 모델 가져오기
 
+
 // 게시판 목록 가져오기
 const getList = async (req, res) => {
   try {
     const boards = await Board.findAll();
-    res.json(boards);
+    res.status(201).json(boards);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -17,11 +18,25 @@ const viewList = async (req, res) => {
   try {
     const { id } = req.params;
     const boards = await Board.findByPk(id);
-    res.json(boards);
+    res.status(201).json(boards);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 };
+
+// 조회수 추가
+const upCount = async(req, res)=>{
+  const { id } = req.body;
+  try{
+    const newboard = await Board.findOne({ where: { id } });
+    newboard.viewCount += 1;
+    await newboard.save();
+    res.status(201).json(newboard);
+  }
+  catch(error){
+    res.status(500).json({ error : error.message });
+  }
+}
 
 // 게시판 글 추가(bodyparser 확인)
 const postList = async(req, res) => {
@@ -32,6 +47,23 @@ const postList = async(req, res) => {
   }
   catch(error){
     res.status(500).json({ error: error.message });
+  }
+}
+
+// 게시판 수정
+const updateList = async(req, res) => {
+  try{
+    const { id } = req.params;
+    const { title, content } = req.body;
+    
+    const newBoard = await Board.update(
+      { title: title, content: content }, 
+      { where : { id:id } }
+    )
+    res.status(201).json(newBoard)
+  }
+  catch(error){
+    res.status(500).json({ error : error.message })
   }
 }
 
@@ -50,5 +82,4 @@ const deleteList = async (req, res) => {
   }
 };
 
-
-module.exports = { getList, viewList, deleteList, postList };
+module.exports = { getList, viewList, deleteList, postList, updateList, upCount };
