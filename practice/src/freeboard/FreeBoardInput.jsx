@@ -54,7 +54,11 @@ function FreeBoardInput() {
     e.preventDefault();
     if (mode === "create") {
       try {
-        const res = await axios.post("http://localhost:5000/boards", inputValue);
+        const res = await axios.post("http://localhost:5000/boards", inputValue, {
+          headers : {
+            'Content-type': 'application/json',
+          },
+        });
         if (res.status === 201) {
           alert("작성완료");
           navigate("/freeboard/freeboardlist");
@@ -65,7 +69,11 @@ function FreeBoardInput() {
     }
     else if (mode === "update") {
       try {
-        const res = await axios.post(`http://localhost:5000/boards/update/${id}`, inputValue);
+        const res = await axios.post(`http://localhost:5000/boards/update/${id}`, inputValue, {
+          headers : {
+            'Content-type': 'application/json',
+          }
+        });
         if(res.status === 201){
             alert('수정완료')
             navigate(`/freeboard/freeboardview/${id}`);

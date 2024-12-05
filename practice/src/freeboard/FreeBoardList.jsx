@@ -24,7 +24,11 @@ function FreeBoardList() {
   const navigate = useNavigate();
   const viewPage = async(id) => {
     try{
-      const res = await axios.post("http://localhost:5000/boards/upCount", { id })
+      const res = await axios.post("http://localhost:5000/boards/upCount", { id }, {
+        headers:{
+          'Content-type':'application/json',
+        }
+      })
       console.log(res.data)
     }catch(error){
       console.error("error", error)

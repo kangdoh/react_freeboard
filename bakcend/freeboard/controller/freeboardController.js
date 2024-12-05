@@ -27,6 +27,9 @@ const viewList = async (req, res) => {
 // 조회수 추가
 const upCount = async(req, res)=>{
   const { id } = req.body;
+  if (req.headers['content-type'] !== 'application/json'){
+    return res.status(400).json({ error: 'Content-type error application/json'})
+  }
   try{
     const newboard = await Board.findOne({ where: { id } });
     newboard.viewCount += 1;
@@ -40,6 +43,9 @@ const upCount = async(req, res)=>{
 
 // 게시판 글 추가(bodyparser 확인)
 const postList = async(req, res) => {
+  if (req.headers['content-type'] !== 'application/json'){
+    return res.status(400).json({error: 'Content-type error application/json'})
+  }
   try{
     const { title, content } = req.body;
     const newBoard = await Board.create({ title, content })
