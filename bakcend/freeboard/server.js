@@ -1,7 +1,7 @@
 require('dotenv').config();
 const express = require('express');
 const bodyParser = require('body-parser');
-const { sequelize } = require('./models');
+const db = require('./models');
 const boardRoutes = require('./routes/boardRoutes');
 const cors = require('cors');
 
@@ -18,7 +18,8 @@ app.use(cors());
 app.use(bodyParser.json());
 app.use('/boards', boardRoutes);
 
-sequelize.authenticate()
+// db 연결하고 model안에 있는 table 생성하는 함수
+db.sequelize.sync({force:false})
   .then(() => console.log('Database connected!'))
   .catch(err => console.error('Database connection error:', err));
 

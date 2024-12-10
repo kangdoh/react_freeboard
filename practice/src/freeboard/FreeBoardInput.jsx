@@ -8,7 +8,6 @@ function FreeBoardInput() {
   const { id } = useParams();
   const [mode, setMode] = useState("");
 
-
   // id의 여부로 생성,수정 구분
   useEffect(() => {
     if (id) {
@@ -18,7 +17,6 @@ function FreeBoardInput() {
       setMode("create");
     }
   }, []);
-
 
   // input 값 체크
   const [inputValue, setInputValue] = useState({
@@ -112,6 +110,10 @@ function FreeBoardInput() {
               required
               onChange={inputChange}
             />
+          </div>
+          <div className={BoardInput.form_group}>
+            <label htmlFor="file">사진 업로드</label>
+            <input type="file" />
           </div>
           <button type="submit" className={BoardInput.submit_button}>
             {mode === "update" ? "수정 완료" : "작성 완료"}

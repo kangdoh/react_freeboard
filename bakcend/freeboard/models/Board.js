@@ -35,7 +35,12 @@ module.exports = (sequelize, DataTypes) => {
       }
     }, {
       tableName: 'Boards',
-      timestamps: true, // createdAt, updatedAt 자동 생성 비활성화
+      timestamps: true, // createdAt, updatedAt 자동 생성 활성화
     });
+
+    Board.associate = (models) => {
+      // Board와 BoardFiles 간의 1:N 관계 설정
+      Board.hasMany(models.BoardFiles, { foreignKey: 'postId', sourceKey: 'id' });
+    }
     return Board;
   };

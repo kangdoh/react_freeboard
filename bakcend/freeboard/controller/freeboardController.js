@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const { Board } = require("../models"); // Sequelize 모델 가져오기
+const { BoardFiles } = require("../models"); // Sequelize 모델 가져오기
 
 
 // 게시판 목록 가져오기
