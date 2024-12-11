@@ -12,6 +12,7 @@ services:
       MYSQL_PASSWORD: 1234              # 사용자 계정 비밀번호(사용시에 사용할 번호)
 
   node:
+    image: freeboard-node
     build: .
     container_name: node_server
     ports:
