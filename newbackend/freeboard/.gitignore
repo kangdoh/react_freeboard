@@ -1,0 +1,10 @@
+# Node.js dependencies
+node_modules/
+
+# 환경 파일
+# .env
+
+
+git rm -r --cached .
+git add .gitignore
+git commit -m "Update .gitignore"
