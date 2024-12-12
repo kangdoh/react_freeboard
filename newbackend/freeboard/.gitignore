@@ -5,6 +5,7 @@ node_modules/
 # .env
 
 
-git rm -r --cached .
-git add .gitignore
-git commit -m "Update .gitignore"
+# 이미 올렸던 파일은 추적이 되고 있기에, 초기화 필요
+# git rm -r --cached .
+# git add .gitignore
+# git commit -m "Update .gitignore"
