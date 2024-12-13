@@ -49,7 +49,7 @@ const postList = async(req, res) => {
   try{
     const { title, content } = req.body;
     const newBoard = await Freeboard.create({ title, content })
-    res.status(201).json(ewBoard);
+    res.status(201).json(newBoard);
   }
   catch(error){
     res.status(500).json({ enrror: error.message });

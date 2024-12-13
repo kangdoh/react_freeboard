@@ -4,29 +4,26 @@ services:
     image: mysql:latest  # MySQL 이미지 사용
     container_name: mysql_container
     ports:
-      - "3306:3306"  
+      - "3306:3306"  # MySQL 기본 포트
     environment:
-      MYSQL_ROOT_PASSWORD: "1234"        # MySQL root 계정 비밀번호
-      MYSQL_DATABASE: dohyundatabase       # MySQL 생성할 데이터베이스 이름
-      MYSQL_USER: root                 # MySQL 사용자 계정
-      MYSQL_PASSWORD: "1234"             # 사용자 계정 비밀번호
-    networks:
-      - my_network
-    
-  node-mysql: # 이미지 이름이 된다.(폴더명-node)
+      MYSQL_ROOT_PASSWORD: 1234         # MySQL root 계정 비밀번호
+      MYSQL_DATABASE: mydatabase        # MySQL 생성할 데이터베이스 이름
+      MYSQL_USER: root                  # MySQL 사용자 계정
+      MYSQL_PASSWORD: 1234              # 사용자 계정 비밀번호
+
+  node:
     build: .
-    container_name: node_server02
+    container_name: node_server
     ports:
       - "5000:5000"
     depends_on:
       - mysql
-    networks:
-      - my_network
     environment:
-      MYSQL_URI: mysql://root:1234@mysql:3306/dohyundatabase  # MySQL 연결 URI
-    command: ["node", "app.js"]
+      MYSQL_URI: mysql://root:1234@mysql:3306/mydatabase
+    command: ["./wait-for-it.sh", "mysql:3306", "--", "node", "server.js"]
 
-# 네트워크 설정
-networks:
-  my_network:
-    driver: bridge
+
+# # 네트워크 설정
+# networks:
+#   my_network:
+#     driver: bridge

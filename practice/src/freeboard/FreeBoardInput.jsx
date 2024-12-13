@@ -31,7 +31,6 @@ function FreeBoardInput() {
     });
   };
   
-
   // 수정시 게시글 가져오기
   const updateList = async() => {
     try{

@@ -20,14 +20,14 @@ class User extends Sequelize.Model{
                 type: Sequelize.TEXT,
                 allowNull: true,
             },
-            created_at:{
-                type: Sequelize.DATE,
-                allowNull: false,
-                defaultValue: Sequelize.NOW,
-            },
+            // created_at:{
+            //     type: Sequelize.DATE,
+            //     allowNull: false,
+            //     defaultValue: Sequelize.NOW,
+            // },
         },{
             sequelize,
-            timestamps: false,
+            timestamps: true,
             underscored: false,
             tableName: 'users',
             modelName: 'User',

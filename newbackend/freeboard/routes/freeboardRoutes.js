@@ -16,4 +16,6 @@ router.delete('/:id', freeboardController.deleteList)
 // update
 router.post('/update/:id', freeboardController.updateList)
 
+
 module.exports = router;
+
