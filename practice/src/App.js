@@ -8,7 +8,7 @@ import Home from "./home/Home";
 function App() {
   return (
       <BrowserRouter>
-        <Nav></Nav>
+        <Nav>gkgkgkgk</Nav>
         
         <Routes>
           <Route path="/" element={<Home/>} />
