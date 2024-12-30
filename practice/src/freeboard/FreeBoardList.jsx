@@ -1,27 +1,48 @@
 import React, { useEffect, useState } from "react";
 import BoardList from "css/FreeBoard/FreeBoardList.module.css";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
+import dayjs from "dayjs";
 
 function FreeBoardList() {
 
+  const navigate = useNavigate();
+  const location = useLocation();
+
   const [freeboard, setFreeboard] = useState([]);
+  const [sortOption, setSortOption] = useState({ sort: "createdAt", order: "DESC" })
+  
   
   // 게시판 리스트 가져오기
+  const fetchFreeboard = async (sort, order) => {
+    try {
+      const res = await axios.get("http://localhost:5000/boards", {
+        params: { sort, order },
+      });
+      setFreeboard(res.data);
+    } catch (error) {
+      console.error("freeboard 가져오기 실패", error);
+    }
+  };
+
+  // 게시판 정렬
+  const handleSort = (sort, order) => {
+    // URL 쿼리 파라미터 업데이트
+    navigate(`?sort=${sort}&order=${order}`);
+  };
+
+  // 게시판 랜더링
   useEffect(() => {
-    const fetchFreeboard = async () => {
-      try {
-        const res = await axios.get("http://localhost:5000/boards");
-        setFreeboard(res.data);
-      } catch (error) {
-        console.error("freeboard 가져오기 실패", error);
-      }
-    };
-    fetchFreeboard();
-  }, []);
+    const queryParams = new URLSearchParams(location.search);
+    const sort = queryParams.get("sort") || "createdAt";
+    const order = queryParams.get("order") || "DESC";
+
+    setSortOption({sort, order});
+    fetchFreeboard(sort, order);
+  }, [location.search]);
+
 
   // 게시판 글 보기 (카운트 증가)
-  const navigate = useNavigate();
   const viewPage = async(id) => {
     try{
       const res = await axios.post("http://localhost:5000/boards/upCount", { id }, {
@@ -41,8 +62,15 @@ function FreeBoardList() {
     navigate("/freeboard/freeboardcreate");
   };
 
+
   return (
     <>
+      <ul className={BoardList.sortList}>
+        <li onClick={() => handleSort("createdAt", "ASC")}>최신 순</li>
+        <li onClick={() => handleSort("createdAt", "DESC")}>오래된 순</li>
+        <li onClick={() => handleSort("viewCount", "DESC")}>조회순</li>
+      </ul>
+
       <table className={BoardList.board_table}>
         <thead>
           <tr>
@@ -61,7 +89,7 @@ function FreeBoardList() {
                 <td>{index+1}</td>
                 <td>{item.title}</td>
                 <td>{item.content}</td>
-                <td>{item.createdAt}</td>
+                <td>{dayjs(item.createdAt).format('YYYY-MM-DD')}</td>
                 <td>{item.viewCount}</td>
               </tr>
             );

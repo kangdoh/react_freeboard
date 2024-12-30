@@ -30,3 +30,26 @@
   font-weight: bold; 
   text-align: center; 
 }
+
+/* 테이블 hover시 */
+.board_table tr:hover {
+  background-color: #6d6d6d;
+}
+.board_table tr:hover td:nth-child(1){
+  color: #fff;
+}
+
+
+/* 테이블 정렬 버튼 */
+.sortList{
+   width: 100%;
+   display: flex;
+   justify-content: flex-end;
+}
+.sortList li{
+  cursor: pointer;
+  margin: 0 10px;
+}
+.sortList li:hover{
+  font-weight: 600;
+}
