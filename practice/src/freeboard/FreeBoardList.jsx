@@ -10,20 +10,21 @@ function FreeBoardList() {
   const navigate = useNavigate();
   const location = useLocation();
   const [freeboard, setFreeboard] = useState([]); // 게시판 출력 부분
-
-  // 페이지네이션
+  
+  // 페이지네이션 변수
   const [currentPage, setCurrentPage] = useState(1); // 현재 페이지
-  const [totalPages, setTotalPages] = useState(0); // 총 페이지 수
-
+  const [totalItemes, setTotalItemes] = useState(0); // 총 페이지 수
+  const limit = 5;
+  const totalPage = Math.ceil(totalItemes / limit);
 
   // 게시판 리스트 가져오기
-  const fetchFreeboard = async (sort, order, page) => {
+  const fetchFreeboard = async (sort, order, page, limit) => {
     try {
       const res = await axios.get("http://localhost:5000/boards", {
-        params: { sort, order, page },
+        params: { sort, order, page, limit },
       });
-      // setTotalPages(res.data.length / 5);
-      setFreeboard(res.data);
+      setTotalItemes(res.data.totalItem)
+      setFreeboard(res.data.boards);
     } catch (error) {
       console.error("freeboard 가져오기 실패", error);
     }
@@ -37,8 +38,8 @@ function FreeBoardList() {
     navigate(`?${queryString.stringify(updatedQuery)}`);
   };
   // 정렬 변경
-  const handleSort = (sort, order) => {
-    const updatedQuery = { ...currentQuery, sort, order };
+  const handleSort = (sort, order, page) => {
+    const updatedQuery = { ...currentQuery, sort, order, page };
     navigate(`?${queryString.stringify(updatedQuery)}`);
   };
   
@@ -49,7 +50,7 @@ function FreeBoardList() {
     const order = queryParams.get("order") || "DESC";
     const page = queryParams.get("page") || "1";
     
-    fetchFreeboard(sort, order, page);
+    fetchFreeboard(sort, order, page, limit);
   }, [location.search]);
   // useEffect(() => {
   //   const queryParams = queryString.parse(location.search);
@@ -75,7 +76,7 @@ function FreeBoardList() {
     navigate(`/freeboard/freeboardview/${id}`);
   };
 
-  
+
   // 게시판 글 생성하러가기
   const createPage = () => {
     navigate("/freeboard/freeboardcreate");
@@ -85,9 +86,9 @@ function FreeBoardList() {
   return (
     <>
       <ul className={BoardList.sortList}>
-        <li onClick={() => handleSort("createdAt", "ASC")}>최신 순</li>
-        <li onClick={() => handleSort("createdAt", "DESC")}>오래된 순</li>
-        <li onClick={() => handleSort("viewCount", "DESC")}>조회순</li>
+        <li onClick={() => handleSort("createdAt", "ASC", 1)}>최신 순</li>
+        <li onClick={() => handleSort("createdAt", "DESC", 1)}>오래된 순</li>
+        <li onClick={() => handleSort("viewCount", "DESC", 1)}>조회순</li>
       </ul>
 
       <table className={BoardList.board_table}>
@@ -117,11 +118,9 @@ function FreeBoardList() {
       </table>
       <button onClick={createPage}>게시글 작성</button>
 
+
       <div>
-        <button onClick={() => handlePageChange(currentPage - 1)} disabled={currentPage === 1}>
-          Previous
-        </button>
-        {/* {Array.from({ length: totalPages }, (_, i) => (
+        {Array.from({ length: totalPage }, (_, i) => (
           <button
             key={i}
             onClick={() => handlePageChange(i + 1)}
@@ -129,10 +128,7 @@ function FreeBoardList() {
           >
             {i + 1}
           </button>
-        ))} */}
-        <button onClick={() => handlePageChange(currentPage + 1)} disabled={currentPage === totalPages}>
-          Next
-        </button>
+        ))}
       </div>
 
     </>

@@ -7,14 +7,15 @@ const Freeboard = require("../models/freeboard"); // Sequelize 모델 가져오�
 const getList = async (req, res) => {
   const { sort="createAt", order="DESC", page = 1, limit = 5  } = req.query
   const offset = (page - 1) * limit;
-
   try {
     const boards = await Freeboard.findAll({
       order: [[sort, order]],
       limit: parseInt(limit),
       offset: parseInt(offset),
     });
-    res.status(201).json(boards);
+    const totalItem = await Freeboard.count(); // 총 갯수
+    
+    res.status(201).json({boards, totalItem});
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
