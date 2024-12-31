@@ -5,17 +5,20 @@ const Freeboard = require("../models/freeboard"); // Sequelize 모델 가져오�
 
 // 게시판 목록 가져오기
 const getList = async (req, res) => {
-  const { sort="createAt", order="DESC" } = req.query
+  const { sort="createAt", order="DESC", page = 1, limit = 5  } = req.query
+  const offset = (page - 1) * limit;
+
   try {
     const boards = await Freeboard.findAll({
       order: [[sort, order]],
+      limit: parseInt(limit),
+      offset: parseInt(offset),
     });
     res.status(201).json(boards);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 };
-
 
 
 // 게시판 글 보기
@@ -28,7 +31,6 @@ const viewList = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
-
 
 
 // 조회수 추가

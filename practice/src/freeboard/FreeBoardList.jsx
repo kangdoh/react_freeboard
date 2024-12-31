@@ -3,43 +3,61 @@ import BoardList from "css/FreeBoard/FreeBoardList.module.css";
 import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
 import dayjs from "dayjs";
+import queryString from "query-string";
 
 function FreeBoardList() {
 
   const navigate = useNavigate();
   const location = useLocation();
+  const [freeboard, setFreeboard] = useState([]); // 게시판 출력 부분
 
-  const [freeboard, setFreeboard] = useState([]);
-  const [sortOption, setSortOption] = useState({ sort: "createdAt", order: "DESC" })
-  
-  
+  // 페이지네이션
+  const [currentPage, setCurrentPage] = useState(1); // 현재 페이지
+  const [totalPages, setTotalPages] = useState(0); // 총 페이지 수
+
+
   // 게시판 리스트 가져오기
-  const fetchFreeboard = async (sort, order) => {
+  const fetchFreeboard = async (sort, order, page) => {
     try {
       const res = await axios.get("http://localhost:5000/boards", {
-        params: { sort, order },
+        params: { sort, order, page },
       });
+      // setTotalPages(res.data.length / 5);
       setFreeboard(res.data);
     } catch (error) {
       console.error("freeboard 가져오기 실패", error);
     }
   };
 
-  // 게시판 정렬
-  const handleSort = (sort, order) => {
-    // URL 쿼리 파라미터 업데이트
-    navigate(`?sort=${sort}&order=${order}`);
+  // 쿼리를 객체로 사용하기 위한 함수
+  const currentQuery = queryString.parse(location.search);
+  // 페이지 변경
+  const handlePageChange = (page) => {
+    const updatedQuery = { ...currentQuery, page };
+    navigate(`?${queryString.stringify(updatedQuery)}`);
   };
-
+  // 정렬 변경
+  const handleSort = (sort, order) => {
+    const updatedQuery = { ...currentQuery, sort, order };
+    navigate(`?${queryString.stringify(updatedQuery)}`);
+  };
+  
   // 게시판 랜더링
   useEffect(() => {
     const queryParams = new URLSearchParams(location.search);
     const sort = queryParams.get("sort") || "createdAt";
     const order = queryParams.get("order") || "DESC";
-
-    setSortOption({sort, order});
-    fetchFreeboard(sort, order);
+    const page = queryParams.get("page") || "1";
+    
+    fetchFreeboard(sort, order, page);
   }, [location.search]);
+  // useEffect(() => {
+  //   const queryParams = queryString.parse(location.search);
+  //   const { sort = "createdAt", order = "DESC", page = "1" } = queryParams;
+  
+  //   fetchFreeboard(sort, order, page);
+  // }, [location.search]);
+
 
 
   // 게시판 글 보기 (카운트 증가)
@@ -57,6 +75,7 @@ function FreeBoardList() {
     navigate(`/freeboard/freeboardview/${id}`);
   };
 
+  
   // 게시판 글 생성하러가기
   const createPage = () => {
     navigate("/freeboard/freeboardcreate");
@@ -97,6 +116,25 @@ function FreeBoardList() {
         </tbody>
       </table>
       <button onClick={createPage}>게시글 작성</button>
+
+      <div>
+        <button onClick={() => handlePageChange(currentPage - 1)} disabled={currentPage === 1}>
+          Previous
+        </button>
+        {/* {Array.from({ length: totalPages }, (_, i) => (
+          <button
+            key={i}
+            onClick={() => handlePageChange(i + 1)}
+            style={{ fontWeight: currentPage === i + 1 ? "bold" : "normal" }}
+          >
+            {i + 1}
+          </button>
+        ))} */}
+        <button onClick={() => handlePageChange(currentPage + 1)} disabled={currentPage === totalPages}>
+          Next
+        </button>
+      </div>
+
     </>
   );
 }
