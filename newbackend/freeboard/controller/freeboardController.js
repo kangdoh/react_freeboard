@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const Freeboard = require("../models/freeboard"); // Sequelize 모델 가져오기
+const Gallery = require("../models/gallery"); // Sequelize 모델 가져오기
 
 
 // 게시판 목록 가져오기
@@ -21,18 +22,23 @@ const getList = async (req, res) => {
   }
 };
 
-
 // 게시판 글 보기
 const viewList = async (req, res) => {
   try {
     const { id } = req.params;
-    const boards = await Freeboard.findByPk(id);
+    const boards = await Freeboard.findByPk(id, {
+      include:[
+        {
+          model: Gallery,
+          attributes: ['fileName', 'filePath']
+        }
+      ]
+    });
     res.status(201).json(boards);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 };
-
 
 // 조회수 추가
 const upCount = async(req, res)=>{
@@ -51,8 +57,6 @@ const upCount = async(req, res)=>{
   }
 }
 
-
-
 // 게시판 글 추가(bodyparser 확인)
 const postList = async(req, res) => {
   if (req.headers['content-type'] !== 'application/json'){
@@ -67,8 +71,6 @@ const postList = async(req, res) => {
     res.status(500).json({ enrror: error.message });
   }
 }
-
-
 
 // 게시판 수정
 const updateList = async(req, res) => {
@@ -86,8 +88,6 @@ const updateList = async(req, res) => {
     res.status(500).json({ error : error.message })
   }
 }
-
-
 
 // 게시판 삭제
 const deleteList = async (req, res) => {

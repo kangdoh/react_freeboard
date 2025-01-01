@@ -119,7 +119,7 @@ function FreeBoardList() {
       <button onClick={createPage}>게시글 작성</button>
 
 
-      <div>
+      <div className={BoardList}>
         {Array.from({ length: totalPage }, (_, i) => (
           <button
             key={i}

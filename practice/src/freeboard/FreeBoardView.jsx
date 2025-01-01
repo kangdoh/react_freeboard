@@ -8,6 +8,7 @@ function FreeBoardView() {
   const { id } = useParams();
   const [viewBoard, setViewBoard] = useState([]);
 
+  
   // 게시판 불러오기
   useEffect(() => {
     const freeBoardView = async () => {
@@ -21,10 +22,12 @@ function FreeBoardView() {
     freeBoardView();
   }, [id]);  
 
+
   // 게시판 수정으로 이동
   const boardUpdate = async() => {
     navigate(`/freeboard/freeboardupdate/${id}`);
   };
+
 
   // 게시판 삭제
   const boardDelete = async () => {
@@ -55,6 +58,9 @@ function FreeBoardView() {
 
         <div className={BoardView.post_content}>
           <p>{viewBoard.content}</p>
+          <p>
+            이미지 들어올곳
+          </p>
         </div>
       </div>
 

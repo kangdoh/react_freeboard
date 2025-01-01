@@ -53,3 +53,9 @@
 .sortList li:hover{
   font-weight: 600;
 }
+
+
+/* 테이블 페이지 버튼 */
+button{
+  cursor: pointer;
+}
