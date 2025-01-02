@@ -14,6 +14,7 @@ function FreeBoardView() {
     const freeBoardView = async () => {
       try {
         const res = await axios.get(`http://localhost:5000/boards/${id}`);
+        console.log(res.data);
         setViewBoard(res.data);
       } catch (error) {
         console.error("boardView Error", error);

@@ -18,7 +18,8 @@ function FreeBoardInput() {
     }
   }, []);
 
-  // input 값 체크
+
+  // input 값 체크(랜더링/상태)
   const [inputValue, setInputValue] = useState({
     title: "",
     content: "",
@@ -31,6 +32,7 @@ function FreeBoardInput() {
     });
   };
   
+
   // 수정시 게시글 가져오기
   const updateList = async() => {
     try{
@@ -112,7 +114,7 @@ function FreeBoardInput() {
           </div>
           <div className={BoardInput.form_group}>
             <label htmlFor="file">사진 업로드</label>
-            <input type="file" />
+            <input type="file" multiple name="file" />
           </div>
           <button type="submit" className={BoardInput.submit_button}>
             {mode === "update" ? "수정 완료" : "작성 완료"}
