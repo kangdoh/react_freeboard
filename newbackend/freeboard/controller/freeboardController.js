@@ -1,7 +1,11 @@
 const express = require("express");
 const router = express.Router();
+const multer = require("multer");
+const upload = multer({dest:'uploads/'})
+
 const Freeboard = require("../models/freeboard"); // Sequelize 모델 가져오기
 const Gallery = require("../models/gallery"); // Sequelize 모델 가져오기
+
 
 
 // 게시판 목록 가져오기
@@ -59,13 +63,28 @@ const upCount = async(req, res)=>{
 
 // 게시판 글 추가(bodyparser 확인)
 const postList = async(req, res) => {
-  if (req.headers['content-type'] !== 'application/json'){
-    return res.status(400).json({error: 'Content-type error application/json'})
+  // if (req.headers['content-type'] !== 'multipart/form-data') 
+  if (req.headers['content-type'].indexOf('multipart/form-data') === -1){ // 이게 뭘까?
+    return res.status(400).json({error: 'Content-type error multipart/form-data'})
   }
+
+  
   try{
     const { title, content } = req.body;
+    const files = req.files;
+
+    const savedFiles = [];
+    for (const file of files) { // 이게 뭘까?
+      const savedFile = await Gallery.create({
+        fileName: file.filename,         
+        filePath: file.path,             
+        fileNumber: 1, 
+      });
+      savedFiles.push(savedFile);
+    }
+
     const newBoard = await Freeboard.create({ title, content })
-    res.status(201).json(newBoard);
+    res.status(201).json({newBoard, savedFiles});
   }
   catch(error){
     res.status(500).json({ enrror: error.message });

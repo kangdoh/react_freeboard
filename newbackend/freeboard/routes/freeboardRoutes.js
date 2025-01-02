@@ -15,8 +15,6 @@ router.delete('/:id', freeboardController.deleteList)
 router.post('/update/:id', freeboardController.updateList)
 
 
-// 파일 업로드
-// router.post()
 
 
 
