@@ -53,7 +53,6 @@ function FreeBoardInput() {
     return formdata;
   }
 
-
   // 작성완료 클릭 시(생성, 수정)
   const createFreeBoard = async (e) => {
     e.preventDefault();
