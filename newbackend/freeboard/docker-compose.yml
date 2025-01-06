@@ -21,9 +21,10 @@ services:
     environment:
       MYSQL_URI: mysql://root:1234@mysql:3306/mydatabase
     command: ["./wait-for-it.sh", "mysql:3306", "--", "node", "server.js"]
-
+    volumes:
+      - ./uploads:/usr/src/app/uploads 
 
 # # 네트워크 설정
-# networks:
-#   my_network:
-#     driver: bridge
+networks:
+  my_network:
+    driver: bridge

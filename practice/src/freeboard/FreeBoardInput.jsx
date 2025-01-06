@@ -31,13 +31,13 @@ function FreeBoardInput() {
       [name]: value, // name 속성을 키로 사용해 해당 값 업데이트
     });
   };
+
   // 업로드 파일 저장변수
   const [files, setFiles] = useState([]);
   const fileChange = (e) => {
     const selectedFiles = Array.from(e.target.files); 
     setFiles(selectedFiles);
   }
-
   // formdata로 합치기
   const creatFormData = ()=>{
     const formdata = new FormData(); // 최종 통신에 사용할 formdata
@@ -49,9 +49,9 @@ function FreeBoardInput() {
     }else{
       formdata.append('files', new Blob([], {type: 'application/octet-stream'}))
     }
-
     return formdata;
   }
+
 
   // 작성완료 클릭 시(생성, 수정)
   const createFreeBoard = async (e) => {
@@ -60,9 +60,11 @@ function FreeBoardInput() {
 
     if (mode === "create") {
       try {
-        const res = await axios.post("http://localhost:5000/boards", formdata, {
+        // const res = await axios.post("http://localhost:5000/boards", formdata, {
+        const res = await axios.post("http://localhost:5000/boards", inputValue, {
           headers : {
-            'Content-type': 'multipart/form-data',
+            // 'Content-type': 'multipart/form-data',
+            'Content-type': 'application/json',
           },
         });
         if (res.status === 201) {

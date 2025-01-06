@@ -84,7 +84,7 @@ function FreeBoardList() {
 
 
   return (
-    <>
+    <section className={BoardList.wrapper}>
       <ul className={BoardList.sortList}>
         <li onClick={() => handleSort("createdAt", "ASC", 1)}>최신 순</li>
         <li onClick={() => handleSort("createdAt", "DESC", 1)}>오래된 순</li>
@@ -118,20 +118,22 @@ function FreeBoardList() {
       </table>
       <button onClick={createPage}>게시글 작성</button>
 
-
-      <div className={BoardList}>
+      <div className={BoardList.btn}>
+        <button>이전</button>
         {Array.from({ length: totalPage }, (_, i) => (
           <button
             key={i}
+            className={BoardList.numberBtn}
             onClick={() => handlePageChange(i + 1)}
             style={{ fontWeight: currentPage === i + 1 ? "bold" : "normal" }}
           >
             {i + 1}
           </button>
         ))}
+        <button>다음</button>
       </div>
 
-    </>
+    </section>
   );
 }
 

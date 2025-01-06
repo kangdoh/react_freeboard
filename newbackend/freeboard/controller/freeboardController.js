@@ -5,7 +5,6 @@ const Freeboard = require("../models/freeboard"); // Sequelize 모델 가져오�
 const Gallery = require("../models/gallery"); // Sequelize 모델 가져오기
 
 
-
 // 게시판 목록 가져오기
 const getList = async (req, res) => {
   const { sort="createAt", order="DESC", page = 1, limit = 5  } = req.query
@@ -45,7 +44,6 @@ const viewList = async (req, res) => {
 };
 
 
-
 // 조회수 추가
 const upCount = async(req, res)=>{
   const { id } = req.body;
@@ -64,36 +62,34 @@ const upCount = async(req, res)=>{
 }
 
 
-
 // 게시판 글 추가(bodyparser 확인)
 const postList = async(req, res) => {
-  // if (req.headers['content-type'] !== 'multipart/form-data') 
-  if (req.headers['content-type'].indexOf('multipart/form-data') === -1){ // 이게 뭘까?
-    return res.status(400).json({error: 'Content-type error multipart/form-data'})
-  }
   try{
-    const { title, content } = req.body;
-    const files = req.files;
+    // const { title, content } = req.body;
+    // const newBoard = await Freeboard.create({ title, content })
+    // res.status(201).json({newBoard});
 
-    const newBoard = await Freeboard.create({ title, content })
-    
-    const savedFiles = [];
-    for (const file of files) { // 이게 뭘까?
-      const savedFile = await Gallery.create({
-        fileName: file.filename,         
-        filePath: file.path,             
-        fileNumber: newBoard.id, 
-      });
-      savedFiles.push(savedFile);
-    }
+    const { inputValue } = req.body;
+    const parsedInputValue = JSON.parse(inputValue); // Blob으로 보내진 JSON 파싱
 
-    res.status(201).json({newBoard, savedFiles});
+    // 업로드된 파일 경로 가져오기
+    const filePaths = req.files.map(file => file.path);
+
+    // 데이터베이스에 저장 (이미지 경로 포함)
+    const newBoard = await Freeboard.create({
+      title: parsedInputValue.title,
+      content: parsedInputValue.content,
+      images: filePaths, // 이미지 경로 배열 저장
+    });
+
+    res.status(201).json({ newBoard });
   }
   catch(error){
-    res.status(500).json({ enrror: error.message });
+    // res.status(500).json({ enrror: error.message });
+    console.error('Error in postList:', error);
+    res.status(500).json({ error: error.message });
   }
 }
-
 
 
 // 게시판 수정
