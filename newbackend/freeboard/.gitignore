@@ -4,7 +4,6 @@ node_modules/
 # 환경 파일
 # .env
 
-
 # 이미 올렸던 파일은 추적이 되고 있기에, 초기화 필요
 # git rm -r --cached .
 # git add .gitignore

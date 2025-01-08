@@ -1,11 +1,37 @@
 # Node.js 이미지 사용
+# FROM node:16
+
+# # 작업 디렉토리 설정
+# WORKDIR /app
+
+# # 업로드 폴더 생성
+# RUN mkdir -p /usr/src/app/uploads
+
+# # package.json과 package-lock.json 복사
+# COPY package*.json ./
+
+# # 의존성 설치
+# RUN npm install
+
+# # 앱 소스 복사
+# COPY . .
+
+# # 포트 개방
+# EXPOSE 5000
+
+# # 앱 실행
+# CMD ["npm", "start"]
+# # CMD ["./wait-for-it.sh", "some_host:some_port", "--", "node", "app.js"]
+
+
+# Node.js 이미지 사용
 FROM node:16
 
 # 작업 디렉토리 설정
-WORKDIR /app
+WORKDIR /usr/src/app
 
 # 업로드 폴더 생성
-RUN mkdir -p /usr/src/app/uploads
+RUN mkdir -p uploads
 
 # package.json과 package-lock.json 복사
 COPY package*.json ./
@@ -20,4 +46,4 @@ COPY . .
 EXPOSE 5000
 
 # 앱 실행
-CMD ["node", "app.js"]
+CMD ["npm", "run", "start"]

@@ -1,15 +1,58 @@
+# version: '3.8'
+# services:
+#   mysql:
+#     image: mysql:latest  # MySQL 이미지 사용
+#     container_name: mysql_container
+#     ports:
+#       - "3306:3306"  # MySQL 기본 포트
+#     environment:
+#       MYSQL_ROOT_PASSWORD: 1234         # MySQL root 계정 비밀번호
+#       MYSQL_DATABASE: mydatabase        # MySQL 생성할 데이터베이스 이름
+#       # MYSQL_USER: root                  # MySQL 사용자 계정
+#       # MYSQL_PASSWORD: 1234              # 사용자 계정 비밀번호
+#     networks:
+#       - my_network
+
+#   node:
+#     build: .
+#     container_name: node_server
+#     ports:
+#       - "5000:5000"
+#     depends_on:
+#       - mysql
+#     mysql:
+#       MYSQL_URI: mysql://mysql_container/mydatabase
+#     # command: ["./scripts/wait-for-it.sh", "mysql:3306", "--", "node", "app.js"]
+#     volumes:
+#       - ./uploads:/usr/src/app/uploads 
+#     #   - ./scripts/wait-for-it . sh:/usr/src/app/wait-for-it.sh
+#     networks:
+#       - my_network
+
+# # 네트워크 설정
+# networks:
+#   my_network:
+#     driver: bridge
+
+
+
 version: '3.8'
 services:
   mysql:
-    image: mysql:latest  # MySQL 이미지 사용
+    image: mysql:latest
     container_name: mysql_container
     ports:
-      - "3306:3306"  # MySQL 기본 포트
+      - "3306:3306"
     environment:
-      MYSQL_ROOT_PASSWORD: 1234         # MySQL root 계정 비밀번호
-      MYSQL_DATABASE: mydatabase        # MySQL 생성할 데이터베이스 이름
-      MYSQL_USER: root                  # MySQL 사용자 계정
-      MYSQL_PASSWORD: 1234              # 사용자 계정 비밀번호
+      MYSQL_ROOT_PASSWORD: 1234
+      MYSQL_DATABASE: mydatabase
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+    networks:
+      - my_network
 
   node:
     build: .
@@ -17,14 +60,18 @@ services:
     ports:
       - "5000:5000"
     depends_on:
-      - mysql
+      mysql:
+        condition: service_healthy
     environment:
-      MYSQL_URI: mysql://root:1234@mysql:3306/mydatabase
-    command: ["./wait-for-it.sh", "mysql:3306", "--", "node", "server.js"]
+      NODE_ENV: production
     volumes:
-      - ./uploads:/usr/src/app/uploads 
+      - ./uploads:/usr/src/app/uploads
+    networks:
+      - my_network
 
-# # 네트워크 설정
+
 networks:
   my_network:
     driver: bridge
+
+
