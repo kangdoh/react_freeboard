@@ -8,7 +8,7 @@ const path = require('path');
 // 업로드 파일 저장 경로 설정
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, path.join(__dirname, './uploads:/usr/src/app/uploads')); // Docker 볼륨에 연결된 폴더 경로
+    cb(null, '/usr/src/app/uploads'); // Docker에서 마운트된 볼륨 경로
   },
   filename: (req, file, cb) => {
     const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
@@ -29,7 +29,11 @@ router.get('/', freeboardController.getList)
 router.get('/:id', freeboardController.viewList)
 
 // post
-router.post('/', upload.array('files', 5), freeboardController.postList)
+router.post('/', upload.array('files', 5), (req, res, next) => {
+  console.log("Multer processed request:", req.files);
+  console.log("Request body:", req.body);
+  next();
+}, freeboardController.postList);
 // router.post('/', freeboardController.postList)
 
 router.post('/upCount', freeboardController.upCount)
