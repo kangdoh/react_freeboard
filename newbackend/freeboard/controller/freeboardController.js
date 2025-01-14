@@ -63,38 +63,55 @@ const upCount = async(req, res)=>{
 }
 
 
-// 게시판 글 추가(bodyparser 확인)
-const postList = async(req, res) => {
-  if (req.headers['content-type'] !== 'application/json'){
-    return res.status(400).json({ error: 'Content-type error application/json'})
+// 게시글 추가
+const postList = async (req, res) => {
+  if (req.headers['content-type'] !== 'multipart/form-data'){
+    return res.status(400).json({error: 'Content-type error multipart/form-data'})
   }
-  try{
-    console.log(req.body);
-    const { title, content } = req.body;
-    const newBoard = await Freeboard.create({ title, content })
-    res.status(201).json({newBoard});
+  try {
+    console.log("Request Body:", req.body);
+    const { inputValue } = req.body;
+    const parsedInputValue = JSON.parse(inputValue); // Blob으로 보내진 JSON 파싱
 
-    // const { inputValue } = req.body;
-    // const parsedInputValue = JSON.parse(inputValue); // Blob으로 보내진 JSON 파싱
+    // 첨부된 파일 확인 및 처리
+    let filePaths = [];
+    if (req.files && req.files.length > 0) {
+      // 파일이 존재할 경우 처리
+      filePaths = req.files.map((file) => ({
+        fileName: file.originalname, // 파일의 원래 이름
+        filePath: file.path, // 저장된 파일 경로
+      }));
+    } else {
+      console.log("빈 파일이 전송되었습니다.");
+    }
 
-    // // 업로드된 파일 경로 가져오기
-    // const filePaths = req.files.map(file => file.path);
+    // 게시판 글 생성
+    const newBoard = await Freeboard.create({
+      title: parsedInputValue.title,
+      content: parsedInputValue.content,
+    });
 
-    // // 데이터베이스에 저장 (이미지 경로 포함)
-    // const newBoard = await Freeboard.create({
-    //   title: parsedInputValue.title,
-    //   content: parsedInputValue.content,
-    //   images: filePaths, // 이미지 경로 배열 저장
-    // });
+    // 첨부 파일 저장 (파일이 있을 경우에만 처리)
+    const newFiles = filePaths.length > 0
+      ? await Promise.all(
+          filePaths.map(async ({ fileName, filePath }) => {
+            return await Gallery.create({
+              fileName: fileName,
+              filePath: filePath,
+              fileNumber: newBoard.id, // 게시판 글과 연결
+            });
+          })
+        )
+      : [];
 
-    // res.status(201).json({ newBoard });
+    // 성공 응답
+    res.status(201).json({ newBoard, newFiles });
+  } catch (error) {
+    console.error("게시글 생성 오류:", error);
+    res.status(500).json({ message: "서버 오류가 발생했습니다.", error });
   }
-  catch(error){
-    res.status(500).json({ enrror: error.message });
-    // console.error('Error in postList:', error);
-    // res.status(500).json({ error: error.message });
-  }
-}
+};
+
 
 
 // 게시판 수정

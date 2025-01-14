@@ -30,42 +30,42 @@ function FreeBoardInput() {
       ...inputValue, // 기존 상태 유지
       [name]: value, // name 속성을 키로 사용해 해당 값 업데이트
     });
-    console.log(inputValue)
   };
 
   // 업로드 파일 저장변수
-  // const [files, setFiles] = useState([]);
-  // const fileChange = (e) => {
-  //   const selectedFiles = Array.from(e.target.files); 
-  //   setFiles(selectedFiles);
-  // }
+  const [files, setFiles] = useState([]);
+  const fileChange = (e) => {
+    const selectedFiles = Array.from(e.target.files); 
+    console.log(selectedFiles)
+    setFiles(selectedFiles);
+  }
   // formdata로 합치기
-  // const creatFormData = ()=>{
-  //   const formdata = new FormData(); // 최종 통신에 사용할 formdata
-  //   formdata.append('inputValue', new Blob([JSON.stringify(inputValue)], {type : 'application/json'}));
-  //   if(files.length > 0){
-  //     files.forEach((file)=>{
-  //       formdata.append('files', file);
-  //     })
-  //   }else{
-  //     formdata.append('files', new Blob([], {type: 'application/octet-stream'}))
-  //   }
-  //   return formdata;
-  // }
-
+  const createFormData = ()=>{
+    const formdata = new FormData(); // 최종 통신에 사용할 formdata
+    formdata.append('inputValue', new Blob([JSON.stringify(inputValue)], {type : 'application/json'}));
+    if(files.length > 0){
+      files.forEach((file)=>{
+        formdata.append('files', file);
+      })
+    }else{
+      formdata.append('files', new Blob([], {type: 'application/octet-stream'}))
+    }
+    return formdata;
+  }
 
   // 작성완료 클릭 시(생성, 수정)
   const createFreeBoard = async (e) => {
     e.preventDefault();
-    // const formdata = creatFormData();
+    const formdata = createFormData();
+    console.log(formdata)
 
     if (mode === "create") {
       try {
-        // const res = await axios.post("http://localhost:5000/boards", formdata, {
-        const res = await axios.post("http://localhost:5000/boards", inputValue, {
+        const res = await axios.post("http://localhost:5000/boards", formdata, {
+        // const res = await axios.post("http://localhost:5000/boards", inputValue, {
           headers : {
-            // 'Content-type': 'multipart/form-data',
-            'Content-type': 'application/json',
+            'Content-type': 'multipart/form-data',
+            // 'Content-type': 'application/json',
           },
         });
         if (res.status === 201) {
@@ -141,7 +141,7 @@ function FreeBoardInput() {
           </div>
           <div className={BoardInput.form_group}>
             <label htmlFor="file">사진 업로드</label>
-            {/* <input type="file" multiple name="file" onChange={fileChange}/> */}
+            <input type="file" multiple onChange={fileChange}/>
           </div>
           <button type="submit" className={BoardInput.submit_button}>
             {mode === "update" ? "수정 완료" : "작성 완료"}
