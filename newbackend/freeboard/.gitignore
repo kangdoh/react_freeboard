@@ -1,6 +1,9 @@
 # Node.js dependencies
 node_modules/
 
+# image file
+uploads/
+
 # 환경 파일
 # .env
 
