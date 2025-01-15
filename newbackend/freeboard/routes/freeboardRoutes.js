@@ -7,8 +7,6 @@ const path = require("path");
 // 업로드 파일 저장 경로 설정
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    console.log(process.cwd());
-    // cb(null, path.join(__dirname, "./uploads:/usr/src/app/uploads")); // Docker 볼륨에 연결된 폴더 경로
     cb(null, path.join(process.cwd(), "/uploads")); // Docker 볼륨에 연결된 폴더 경로
   },
   filename: (req, file, cb) => {
