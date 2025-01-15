@@ -35,6 +35,7 @@ function FreeBoardList() {
   // 페이지 변경
   const handlePageChange = (page) => {
     const updatedQuery = { ...currentQuery, page };
+    setCurrentPage(page)
     navigate(`?${queryString.stringify(updatedQuery)}`);
   };
   // 정렬 변경
@@ -58,7 +59,6 @@ function FreeBoardList() {
   
   //   fetchFreeboard(sort, order, page);
   // }, [location.search]);
-
 
 
   // 게시판 글 보기 (카운트 증가)
@@ -106,7 +106,7 @@ function FreeBoardList() {
           {freeboard.map((item, index) => {
             return (
               <tr key={item.id} onClick={() => viewPage(item.id)}>
-                <td>{index+1}</td>
+                <td>{index+1+((currentPage-1)*limit)}</td>
                 <td>{item.title}</td>
                 <td>{item.content}</td>
                 <td>{dayjs(item.createdAt).format('YYYY-MM-DD')}</td>

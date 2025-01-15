@@ -19,7 +19,7 @@ function FreeBoardInput() {
   }, []);
 
 
-  // input 값 체크(랜더링/상태)
+  // input(title,content) 값 체크(랜더링/상태)
   const [inputValue, setInputValue] = useState({
     title: "",
     content: "",
@@ -42,7 +42,7 @@ function FreeBoardInput() {
   // formdata로 합치기
   const createFormData = ()=>{
     const formdata = new FormData(); // 최종 통신에 사용할 formdata
-    formdata.append('inputValue', new Blob([JSON.stringify(inputValue)], {type : 'application/json'}));
+    formdata.append('inputValue', JSON.stringify(inputValue)); // 문자열 형태로 추가
     if(files.length > 0){
       files.forEach((file)=>{
         formdata.append('files', file);
@@ -62,10 +62,8 @@ function FreeBoardInput() {
     if (mode === "create") {
       try {
         const res = await axios.post("http://localhost:5000/boards", formdata, {
-        // const res = await axios.post("http://localhost:5000/boards", inputValue, {
           headers : {
             'Content-type': 'multipart/form-data',
-            // 'Content-type': 'application/json',
           },
         });
         if (res.status === 201) {

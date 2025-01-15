@@ -7,15 +7,23 @@ function FreeBoardView() {
   const navigate = useNavigate();
   const { id } = useParams();
   const [viewBoard, setViewBoard] = useState([]);
-
+  const [imgName, setImgName] = useState(null);
   
   // 게시판 불러오기
   useEffect(() => {
     const freeBoardView = async () => {
       try {
         const res = await axios.get(`http://localhost:5000/boards/${id}`);
-        console.log(res.data);
+        
         setViewBoard(res.data);
+        console.log(res.data);
+
+        if (res.data.Galleries.length > 0) {
+          setImgName(res.data.Galleries[0].fileName);
+        } else {
+          setImgName(null);
+        }
+        
       } catch (error) {
         console.error("boardView Error", error);
       }
@@ -28,7 +36,6 @@ function FreeBoardView() {
   const boardUpdate = async() => {
     navigate(`/freeboard/freeboardupdate/${id}`);
   };
-
 
   // 게시판 삭제
   const boardDelete = async () => {
@@ -59,8 +66,7 @@ function FreeBoardView() {
 
         <div className={BoardView.post_content}>
           <p>{viewBoard.content}</p>
-          <p>
-            이미지 들어올곳
+            <p className={BoardView}>{imgName ?  <img src={`http://localhost:5000/uploads/${imgName}`} alt="Uploaded Image" /> : "없음"}
           </p>
         </div>
       </div>

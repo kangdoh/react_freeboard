@@ -4,10 +4,9 @@ const router = express.Router();
 const Freeboard = require("../models/freeboard"); // Sequelize 모델 가져오기
 const Gallery = require("../models/gallery"); // Sequelize 모델 가져오기
 
-
 // 게시판 목록 가져오기
 const getList = async (req, res) => {
-  const { sort="createAt", order="DESC", page = 1, limit = 5  } = req.query
+  const { sort = "createAt", order = "DESC", page = 1, limit = 5 } = req.query;
   const offset = (page - 1) * limit;
   try {
     const boards = await Freeboard.findAll({
@@ -15,27 +14,26 @@ const getList = async (req, res) => {
       limit: parseInt(limit),
       offset: parseInt(offset),
     });
+
     const totalItem = await Freeboard.count(); // 총 갯수
-    
-    res.status(201).json({boards, totalItem});
+
+    res.status(201).json({ boards, totalItem });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 };
-
-
 
 // 게시판 글 보기
 const viewList = async (req, res) => {
   try {
     const { id } = req.params;
     const boards = await Freeboard.findByPk(id, {
-      include:[
+      include: [
         {
           model: Gallery,
-          attributes: ['fileName', 'filePath']
-        }
-      ]
+          attributes: ["fileName", "filePath"],
+        },
+      ],
     });
     res.status(201).json(boards);
   } catch (error) {
@@ -43,47 +41,50 @@ const viewList = async (req, res) => {
   }
 };
 
-
-
 // 조회수 추가
-const upCount = async(req, res)=>{
+const upCount = async (req, res) => {
   const { id } = req.body;
-  if (req.headers['content-type'] !== 'application/json'){
-    return res.status(400).json({ error: 'Content-type error application/json'})
+  if (req.headers["content-type"] !== "application/json") {
+    return res
+      .status(400)
+      .json({ error: "Content-type error application/json" });
   }
-  try{
+  try {
     const newboard = await Freeboard.findOne({ where: { id } });
     newboard.viewCount += 1;
     await newboard.save();
     res.status(201).json(newboard);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
   }
-  catch(error){
-    res.status(500).json({ error : error.message });
-  }
-}
-
+};
 
 // 게시글 추가
 const postList = async (req, res) => {
-  if (req.headers['content-type'] !== 'multipart/form-data'){
-    return res.status(400).json({error: 'Content-type error multipart/form-data'})
+  console.log("일로오나" + req.headers["content-type"]);
+  if (!req.headers["content-type"].includes("multipart/form-data")) {
+    return res
+      .status(400)
+      .json({ error: "Content-type error multipart/form-data" });
   }
   try {
-    console.log("Request Body:", req.body);
+    console.log("Request Body:", req.file);
     const { inputValue } = req.body;
+    const fileOne = req.file;
     const parsedInputValue = JSON.parse(inputValue); // Blob으로 보내진 JSON 파싱
 
     // 첨부된 파일 확인 및 처리
-    let filePaths = [];
-    if (req.files && req.files.length > 0) {
-      // 파일이 존재할 경우 처리
-      filePaths = req.files.map((file) => ({
-        fileName: file.originalname, // 파일의 원래 이름
-        filePath: file.path, // 저장된 파일 경로
-      }));
-    } else {
-      console.log("빈 파일이 전송되었습니다.");
-    }
+    // let filePaths = [];
+    // if (req.file && req.file.length > 0) {
+    //   // 파일이 존재할 경우 처리
+    //   filePaths = req.file.map((fileItem) => ({
+    //     fileName: fileItem.originalname, // 파일의 원래 이름
+    //     filePath: fileItem.path, // 저장된 파일 경로
+    //   }));
+    //   console.log(filePaths);
+    // } else {
+    //   console.log("빈 파일이 전송되었습니다.");
+    // }
 
     // 게시판 글 생성
     const newBoard = await Freeboard.create({
@@ -92,17 +93,24 @@ const postList = async (req, res) => {
     });
 
     // 첨부 파일 저장 (파일이 있을 경우에만 처리)
-    const newFiles = filePaths.length > 0
-      ? await Promise.all(
-          filePaths.map(async ({ fileName, filePath }) => {
-            return await Gallery.create({
-              fileName: fileName,
-              filePath: filePath,
-              fileNumber: newBoard.id, // 게시판 글과 연결
-            });
-          })
-        )
-      : [];
+    // const newFiles =
+    //   filePaths.length > 0
+    //     ? await Promise.all(
+    //         filePaths.map(async ({ fileName, filePath }) => {
+    //           return await Gallery.create({
+    //             fileName: fileName,
+    //             filePath: filePath,
+    //             fileNumber: newBoard.id, // 게시판 글과 연결
+    //           });
+    //         })
+    //       )
+    //     : [];
+
+    const newFiles = await Gallery.create({
+      fileName: fileOne.filename,
+      filePath: fileOne.path,
+      fileNumber: newBoard.id, // 게시판 글과 연결
+    });
 
     // 성공 응답
     res.status(201).json({ newBoard, newFiles });
@@ -112,26 +120,21 @@ const postList = async (req, res) => {
   }
 };
 
-
-
 // 게시판 수정
-const updateList = async(req, res) => {
-  try{
+const updateList = async (req, res) => {
+  try {
     const { id } = req.params;
     const { title, content } = req.body;
-    
+
     const newBoard = await Freeboard.update(
-      { title: title, content: content }, 
-      { where : { id:id } }
-    )
-    res.status(201).json(newBoard)
+      { title: title, content: content },
+      { where: { id: id } }
+    );
+    res.status(201).json(newBoard);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
   }
-  catch(error){
-    res.status(500).json({ error : error.message })
-  }
-}
-
-
+};
 
 // 게시판 삭제
 const deleteList = async (req, res) => {
@@ -148,4 +151,11 @@ const deleteList = async (req, res) => {
   }
 };
 
-module.exports = { getList, viewList, deleteList, postList, updateList, upCount };
+module.exports = {
+  getList,
+  viewList,
+  deleteList,
+  postList,
+  updateList,
+  upCount,
+};

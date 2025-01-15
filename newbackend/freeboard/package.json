@@ -3,8 +3,8 @@
   "version": "0.0.1",
   "main": "app.js",
   "scripts": {
-    "start": "set NOVE_ENV=production && node app.js",
-    "dev": "set NOVE_ENV=development && node app.js",
+    "start": "set NOVE_ENV=production && nodemon app.js",
+    "dev": "set NOVE_ENV=development && nodemon app.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
