@@ -7,17 +7,13 @@
 }
 
 
-
-
-
-
-
 /* 테이블 전체 스타일 ################################################################################## */
 .board_table {
   width: 100%;
   border-collapse: collapse; /* 테이블 셀 간의 경계선 합치기 */
   margin: 20px 0;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); 
+  /* table-layout: auto; */
 }
 /* 테이블 헤더 스타일 */
 .board_table thead {
@@ -42,6 +38,11 @@
   font-weight: bold; 
   text-align: center; 
 }
+/* 테이블 제목 너비 */
+.board_table tr>td:nth-child(2){
+  width: 50%;
+}
+
 
 /* 테이블 hover시 */
 .board_table tr:hover {
@@ -64,8 +65,7 @@
 .sortList li:hover{
   font-weight: 600;
 }
-
-/* 테이블 페이지 버튼 */
+/* 테이블 페이지네이션 버튼 */
 .btn{
   width: 100%;
   text-align: center;

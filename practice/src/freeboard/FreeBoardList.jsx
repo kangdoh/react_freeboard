@@ -96,7 +96,7 @@ function FreeBoardList() {
           <tr>
             <th>No</th>
             <th>제목</th>
-            <th>내용</th>
+            {/* <th>내용</th> */}
             <th>작성일자</th>
             <th>조회수</th>
           </tr>
@@ -108,7 +108,7 @@ function FreeBoardList() {
               <tr key={item.id} onClick={() => viewPage(item.id)}>
                 <td>{index+1+((currentPage-1)*limit)}</td>
                 <td>{item.title}</td>
-                <td>{item.content}</td>
+                {/* <td>{item.content}</td> */}
                 <td>{dayjs(item.createdAt).format('YYYY-MM-DD')}</td>
                 <td>{item.viewCount}</td>
               </tr>
