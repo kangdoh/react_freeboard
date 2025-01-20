@@ -3,6 +3,9 @@ import BoardView from "css/FreeBoard/FreeBoardView.module.css";
 import axios from "axios";
 import { useEffect, useState } from "react";
 
+require('dotenv').config();  // 추후에 api룰 모아서 관리하고, 그곳에서 env를 바꿔주는 설정을 해주자.
+const GLOBAL_URL = process.env.GLOBAL_URL;
+
 function FreeBoardView() {
   const navigate = useNavigate();
   const { id } = useParams();
@@ -42,7 +45,7 @@ function FreeBoardView() {
     const inputDelete = prompt("삭제를 원하시면 '확인' 을 입력해주세요.")
     if(inputDelete === "삭제"){
       try {
-        await axios.delete(`http://localhost:5000/boards/${id}`);
+        await axios.delete(`${GLOBAL_URL}/boards/${id}`);
         navigate("/freeboard/freeboardlist");
       } catch (error) {
         console.log("삭제 실패", error);

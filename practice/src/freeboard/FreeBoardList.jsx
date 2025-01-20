@@ -6,7 +6,7 @@ import dayjs from "dayjs";
 import queryString from "query-string";
 
 function FreeBoardList() {
-
+  
   const navigate = useNavigate();
   const location = useLocation();
   const [freeboard, setFreeboard] = useState([]); // 게시판 출력 부분
@@ -17,6 +17,7 @@ function FreeBoardList() {
   const limit = 5;
   const totalPage = Math.ceil(totalItemes / limit);
 
+  
   // 게시판 리스트 가져오기
   const fetchFreeboard = async (sort, order, page, limit) => {
     try {
