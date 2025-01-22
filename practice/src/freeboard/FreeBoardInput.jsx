@@ -18,7 +18,6 @@ function FreeBoardInput() {
     }
   }, []);
 
-  
 
   // input(title,content) 값 체크(랜더링/상태)
   const [inputValue, setInputValue] = useState({

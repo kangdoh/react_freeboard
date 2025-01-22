@@ -4,9 +4,10 @@ import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
 import dayjs from "dayjs";
 import queryString from "query-string";
+import { useQueryClient } from "@tanstack/react-query";
 
 function FreeBoardList() {
-  
+
   const navigate = useNavigate();
   const location = useLocation();
   const [freeboard, setFreeboard] = useState([]); // 게시판 출력 부분
@@ -17,7 +18,7 @@ function FreeBoardList() {
   const limit = 5;
   const totalPage = Math.ceil(totalItemes / limit);
 
-  
+
   // 게시판 리스트 가져오기
   const fetchFreeboard = async (sort, order, page, limit) => {
     try {
@@ -84,6 +85,12 @@ function FreeBoardList() {
   };
 
 
+  // 게시글 pre-fetch
+  const queryClient = useQueryClient();
+  const prefetchView = ()=>{
+    
+  }
+
   return (
     <section className={BoardList.wrapper}>
       <ul className={BoardList.sortList}>
@@ -106,7 +113,7 @@ function FreeBoardList() {
         <tbody>
           {freeboard.map((item, index) => {
             return (
-              <tr key={item.id} onClick={() => viewPage(item.id)}>
+              <tr key={item.id} onClick={() => viewPage(item.id)} onMouseEnter={() => prefetchView(item.id)}>
                 <td>{index+1+((currentPage-1)*limit)}</td>
                 <td>{item.title}</td>
                 {/* <td>{item.content}</td> */}

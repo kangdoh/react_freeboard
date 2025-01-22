@@ -16,7 +16,7 @@ app.set("view engine", "html");
 // nunjucks 템플릿 설정
 nunjucks.configure("views", {
   express: app,
-  watch: true,
+  watch: true, 
 });
 
 // (테이블 새로 생성)force: false ⇆ (기존 테이블을 유지하며 추가)alter: true

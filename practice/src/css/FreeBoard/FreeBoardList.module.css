@@ -26,21 +26,30 @@
   text-align: left;
   font-weight: bold; 
   text-transform: uppercase;
+  text-align: center;
 }
 /* 테이블 데이터 스타일 */
 .board_table td {
   padding: 12px 15px; 
   border: 1px solid #ddd; 
   cursor: pointer;
+  text-align: center;
 }
 /* 테이블의 첫 번째 열 스타일 (No 열) */
 .board_table td:first-child {
   font-weight: bold; 
-  text-align: center; 
 }
+
 /* 테이블 제목 너비 */
+.board_table tr>th:nth-child(2){
+  width: 50%;
+  padding-left: 30px;
+  text-align: left !important;
+}
 .board_table tr>td:nth-child(2){
   width: 50%;
+  padding-left: 30px;
+  text-align: left !important;
 }
 
 
