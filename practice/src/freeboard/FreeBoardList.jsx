@@ -86,7 +86,7 @@ function FreeBoardList() {
 
 
   // 게시글 pre-fetch
-  const queryClient = useQueryClient();
+  // const queryClient = useQueryClient();
   const prefetchView = ()=>{
     
   }
