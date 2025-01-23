@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from "react";
 import BoardList from "css/FreeBoard/FreeBoardList.module.css";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import axios from "axios";
 import dayjs from "dayjs";
 import queryString from "query-string";
 import { useQueryClient } from "@tanstack/react-query";
+import { getFreeBoardView } from "api/freeboardApi";
 
 function FreeBoardList() {
 
@@ -13,7 +14,8 @@ function FreeBoardList() {
   const [freeboard, setFreeboard] = useState([]); // 게시판 출력 부분
   
   // 페이지네이션 변수
-  const [currentPage, setCurrentPage] = useState(1); // 현재 페이지
+  const [searchParams, setSearchParams] = useSearchParams();
+  const currentPage = parseInt(searchParams.get("page"), 10) || 1;
   const [totalItemes, setTotalItemes] = useState(0); // 총 페이지 수
   const limit = 5;
   const totalPage = Math.ceil(totalItemes / limit);
@@ -37,7 +39,7 @@ function FreeBoardList() {
   // 페이지 변경
   const handlePageChange = (page) => {
     const updatedQuery = { ...currentQuery, page };
-    setCurrentPage(page)
+    setSearchParams(page)
     navigate(`?${queryString.stringify(updatedQuery)}`);
   };
   // 정렬 변경
@@ -62,7 +64,6 @@ function FreeBoardList() {
   //   fetchFreeboard(sort, order, page);
   // }, [location.search]);
 
-
   // 게시판 글 보기 (카운트 증가)
   const viewPage = async(id) => {
     try{
@@ -78,24 +79,27 @@ function FreeBoardList() {
     navigate(`/freeboard/freeboardview/${id}`);
   };
 
-
   // 게시판 글 생성하러가기
   const createPage = () => {
     navigate("/freeboard/freeboardcreate");
   };
 
-
   // 게시글 pre-fetch
-  // const queryClient = useQueryClient();
-  const prefetchView = ()=>{
-    
+  const queryClient = useQueryClient();
+  const prefetchView = (id)=>{
+    // queryClient.prefetchQuery(['freeBoardView', id], () => getFreeBoardView(id));
+
+    queryClient.prefetchQuery({
+      queryKey: ["freeBoardView", id],
+      queryFn: () => getFreeBoardView({ id }),
+    });
   }
 
   return (
     <section className={BoardList.wrapper}>
       <ul className={BoardList.sortList}>
-        <li onClick={() => handleSort("createdAt", "ASC", 1)}>최신 순</li>
-        <li onClick={() => handleSort("createdAt", "DESC", 1)}>오래된 순</li>
+        <li onClick={() => handleSort("createdAt", "DESC", 1)}>최신 순</li>
+        <li onClick={() => handleSort("createdAt", "ASC", 1)}>오래된 순</li>
         <li onClick={() => handleSort("viewCount", "DESC", 1)}>조회순</li>
       </ul>
 
@@ -113,7 +117,11 @@ function FreeBoardList() {
         <tbody>
           {freeboard.map((item, index) => {
             return (
-              <tr key={item.id} onClick={() => viewPage(item.id)} onMouseEnter={() => prefetchView(item.id)}>
+              <tr key={item.id} onClick={() => viewPage(item.id)} 
+                onMouseEnter={() => {
+                  console.log(item.id);
+                  prefetchView(item.id);
+                }}>
                 <td>{index+1+((currentPage-1)*limit)}</td>
                 <td>{item.title}</td>
                 {/* <td>{item.content}</td> */}
