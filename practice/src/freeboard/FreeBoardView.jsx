@@ -4,6 +4,7 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import dayjs from "dayjs";
 import { getFreeBoardView } from "api/freeboardApi";
+import { useQuery } from "@tanstack/react-query";
 
 function FreeBoardView() {
   const navigate = useNavigate();
@@ -11,21 +12,16 @@ function FreeBoardView() {
   const [viewBoard, setViewBoard] = useState([]);
   const [imgName, setImgName] = useState(null);
   
+  const { data, error, isLoading } = useQuery({
+    queryKey: ['freeBoardView', id], // 배열은 여전히 queryKey로 설정 가능
+    queryFn: () => getFreeBoardView(id), // 함수는 queryFn 키로 전달
+  });
+  
   // 게시판 불러오기
   useEffect(() => {
-    const freeBoardView = async () => {
+    const freeBoardView = () => {
       try {
-        // const res = await axios.get(`http://localhost:5000/boards/${id}`);
-        // setViewBoard(res.data);
-        // console.log(res.data);
-
-        // if (res.data.Galleries.length > 0) {
-        //   setImgName(res.data.Galleries[0].fileName);
-        // } else {
-        //   setImgName(null);
-        // }
-
-        const data = await getFreeBoardView(id);
+        // const data = await getFreeBoardView(id);
         setViewBoard(data);
         console.log(data);
 
@@ -41,6 +37,9 @@ function FreeBoardView() {
     };
     freeBoardView();
   }, [id]);  
+
+  // if (isLoading) return <p>Loading...</p>;
+  // if (error) return <p>Error: {error.message}</p>;
 
 
   // 게시판 수정으로 이동
@@ -69,16 +68,17 @@ function FreeBoardView() {
       <div className={BoardView.post_container}>
 
         <div className={BoardView.post_header}>
-          <h1>{viewBoard.title}</h1>
+          <h1>{viewBoard?.title}</h1>
           <div className={BoardView.post_meta}>
-            <span>{dayjs(viewBoard.createdAt).format('YYYY-MM-DD HH:mm:ss')}</span>
-            <span>조회수: {viewBoard.viewCount}</span>
+            <span>{dayjs(viewBoard?.createdAt).format('YYYY-MM-DD HH:mm:ss')}</span>
+            <span>조회수: {viewBoard?.viewCount}</span>
           </div>
         </div>
  
         <div className={BoardView.post_content}>
-          <p>{viewBoard.content}</p>
-            <p className={BoardView}>{imgName ?  <img src={`http://localhost:5000/uploads/${imgName}`} alt="Uploaded Image" /> : "없음"}
+          <p>{viewBoard?.content}</p>
+          <p className={BoardView}>
+            {imgName ? (<img src={`http://localhost:5000/uploads/${imgName}`} alt="Uploaded Image" />) : (<span>"없음"</span>)}
           </p>
         </div>
  

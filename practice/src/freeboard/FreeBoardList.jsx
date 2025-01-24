@@ -57,13 +57,14 @@ function FreeBoardList() {
     
     fetchFreeboard(sort, order, page, limit);
   }, [location.search]);
+
   // useEffect(() => {
   //   const queryParams = queryString.parse(location.search);
   //   const { sort = "createdAt", order = "DESC", page = "1" } = queryParams;
-  
   //   fetchFreeboard(sort, order, page);
   // }, [location.search]);
 
+  
   // 게시판 글 보기 (카운트 증가)
   const viewPage = async(id) => {
     try{
@@ -87,11 +88,9 @@ function FreeBoardList() {
   // 게시글 pre-fetch
   const queryClient = useQueryClient();
   const prefetchView = (id)=>{
-    // queryClient.prefetchQuery(['freeBoardView', id], () => getFreeBoardView(id));
-
     queryClient.prefetchQuery({
       queryKey: ["freeBoardView", id],
-      queryFn: () => getFreeBoardView({ id }),
+      queryFn: () => getFreeBoardView(id),
     });
   }
 
