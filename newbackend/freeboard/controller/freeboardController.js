@@ -1,5 +1,6 @@
 const express = require("express");
 const router = express.Router();
+const crypto = require("crypto");
 
 const Freeboard = require("../models/freeboard"); // Sequelize 모델 가져오기
 const Gallery = require("../models/gallery"); // Sequelize 모델 가져오기
@@ -35,6 +36,23 @@ const viewList = async (req, res) => {
         },
       ],
     });
+    
+    if (!boards) {
+      return res.status(404).json({ error: "Board not found" });
+    }
+    
+    // 변경되지 않는 필드만 포함해 ETag 계산
+    const hash = crypto.createHash("md5").update(JSON.stringify({
+      title: boards.title, 
+      content: boards.content
+    })).digest("hex");
+    const clientETag = req.headers['if-none-match'];
+
+    if (clientETag && clientETag === hash) {
+      return res.status(304).send(); // ETag가 일치하면 304 반환
+    }
+
+    res.setHeader("ETag", hash);
     res.status(201).json(boards);
   } catch (error) {
     res.status(500).json({ error: error.message });

@@ -91,7 +91,14 @@ function FreeBoardList() {
     queryClient.prefetchQuery({
       queryKey: ["freeBoardView", id],
       queryFn: () => getFreeBoardView(id),
+      staleTime: 5 * 60 * 1000, // 동안 최신 데이터로 유지
+      cacheTime: 10 * 60 * 1000, // 캐시 유지 (뒤로 가기 후에도 유지)
     });
+
+    setTimeout(() => {
+      console.log("캐시 데이터:", queryClient.getQueryData(["freeBoardView", id]));
+    }, 500);
+  
   }
 
   return (

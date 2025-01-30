@@ -4,42 +4,47 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import dayjs from "dayjs";
 import { getFreeBoardView } from "api/freeboardApi";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 function FreeBoardView() {
   const navigate = useNavigate();
   const { id } = useParams();
   const [viewBoard, setViewBoard] = useState([]);
   const [imgName, setImgName] = useState(null);
+  const queryClient = useQueryClient();
+
   
   const { data, error, isLoading } = useQuery({
     queryKey: ['freeBoardView', id], // 배열은 여전히 queryKey로 설정 가능
     queryFn: () => getFreeBoardView(id), // 함수는 queryFn 키로 전달
+    staleTime: 5 * 60 * 1000,
+    cacheTime: 10 * 60 * 1000,
   });
   
   // 게시판 불러오기
   useEffect(() => {
     const freeBoardView = () => {
       try {
+        if (!data) return; 
         // const data = await getFreeBoardView(id);
         setViewBoard(data);
         console.log(data);
 
-        if (data.Galleries.length > 0) {
-          setImgName(data.Galleries[0].fileName);
-        } else {
-          setImgName(null);
-        }
+        setImgName(data.Galleries?.[0]?.fileName || null);
+        // if (data.Galleries.length > 0) {
+        //   setImgName(data.Galleries[0].fileName);
+        // } else {
+        //   setImgName(null);
+        // }
         
       } catch (error) {
         console.error("boardView Error", error);
       }
     };
     freeBoardView();
-  }, [id]);  
-
-  // if (isLoading) return <p>Loading...</p>;
-  // if (error) return <p>Error: {error.message}</p>;
+  }, [data]);  
+  if (isLoading) return <p>Loading...</p>;
+  if (error) return <p>Error: {error.message}</p>;
 
 
   // 게시판 수정으로 이동
